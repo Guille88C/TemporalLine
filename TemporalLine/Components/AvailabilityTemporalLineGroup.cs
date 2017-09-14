@@ -35,6 +35,7 @@ namespace TemporalLine.Components
         private float origX, origY;
 
         private Color mSelectedColor;
+        private bool mMovementAllowed;
 
         // CONSTRUCTOR
 
@@ -67,9 +68,13 @@ namespace TemporalLine.Components
 
 			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
 
-            this.mSelectedColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_selected, Color.Orange);
+            if (a != null)
+            {
+                this.mSelectedColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_selected, Color.Orange);
+                this.mMovementAllowed = a.GetBoolean(Resource.Styleable.TemporalLineColor_temopral_line_movement_allowed, false);
 
-			a.Recycle();
+                a.Recycle();
+            }
         }
 
         // ====
@@ -99,52 +104,55 @@ namespace TemporalLine.Components
                 this.AddView(selectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
 
                 // With the touch event we move el selected area view.
-                selectedLine.Touch += (sender, e) => 
+                if (this.mMovementAllowed)
                 {
-                    switch (e.Event.Action)
+                    selectedLine.Touch += (sender, e) =>
                     {
-                        // We save the coordinates where we are touching the screen (x, y) just when we touch the selected area.
-                        case MotionEventActions.Down:
-                            this.origX = e.Event.RawX;
-                            this.origY = e.Event.RawY;
-                            break;
+                        switch (e.Event.Action)
+                        {
+                            // We save the coordinates where we are touching the screen (x, y) just when we touch the selected area.
+                            case MotionEventActions.Down:
+                                this.origX = e.Event.RawX;
+                                this.origY = e.Event.RawY;
+                                break;
 
-                        // We move the selected area view.
-                        case MotionEventActions.Move:
-                            // Distance that we have moved the selected area.
-                            float deltaX = e.Event.RawX - this.origX;
-                            float deltaY = e.Event.RawY - this.origY;
+                            // We move the selected area view.
+                            case MotionEventActions.Move:
+                                // Distance that we have moved the selected area.
+                                float deltaX = e.Event.RawX - this.origX;
+                                float deltaY = e.Event.RawY - this.origY;
 
-                            // We calculate the new position of the selected area view.
-                            float posViewX = selectedLine.GetX() + deltaX;
-                            if (posViewX > this.mWidth - width) posViewX = this.mWidth - width;
-                            else if (posViewX < 0) posViewX = 0;
+                                // We calculate the new position of the selected area view.
+                                float posViewX = selectedLine.GetX() + deltaX;
+                                if (posViewX > this.mWidth - width) posViewX = this.mWidth - width;
+                                else if (posViewX < 0) posViewX = 0;
 
-                            // We place the selected area view in the new position, and we repaint it ("Invalidate").
-                            selectedLine.SetX(posViewX);
-                            selectedLine.Invalidate();
+                                // We place the selected area view in the new position, and we repaint it ("Invalidate").
+                                selectedLine.SetX(posViewX);
+                                selectedLine.Invalidate();
 
-                            // We calculate the new "origX" and "origY" values. They have to be changed to calculate a right value of
-                            // "deltaX" and "deltaY".
-                            this.origX = e.Event.RawX;
-                            this.origY = e.Event.RawY;
+                                // We calculate the new "origX" and "origY" values. They have to be changed to calculate a right value of
+                                // "deltaX" and "deltaY".
+                                this.origX = e.Event.RawX;
+                                this.origY = e.Event.RawY;
 
-                            break;
+                                break;
 
-                        // When we finish touching the selected area, we invoke an event with the percentage start point and the percentage end point where it is palced.
-                        case MotionEventActions.Up:
-                        case MotionEventActions.Cancel:
-                            if (this.positionEvent != null)
-                            {
-                                this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = selectedLine.GetX() / this.mWidth, TemporalLineEnd = (selectedLine.GetX() + width) / this.mWidth }) ;
-                            }
-                            break;
-                    }
+                            // When we finish touching the selected area, we invoke an event with the percentage start point and the percentage end point where it is palced.
+                            case MotionEventActions.Up:
+                            case MotionEventActions.Cancel:
+                                if (this.positionEvent != null)
+                                {
+                                    this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = selectedLine.GetX() / this.mWidth, TemporalLineEnd = (selectedLine.GetX() + width) / this.mWidth });
+                                }
+                                break;
+                        }
 
 #if (DEBUG)
-                    Log.Info("ATLG :: pos", "(" + (selectedLine.GetX() / this.mWidth).ToString() + " , " + ((selectedLine.GetX() + width) / this.mWidth).ToString() + ")");
+                        Log.Info("ATLG :: pos", "(" + (selectedLine.GetX() / this.mWidth).ToString() + " , " + ((selectedLine.GetX() + width) / this.mWidth).ToString() + ")");
 #endif
-                };
+                    };
+                }
             }
         }
     }

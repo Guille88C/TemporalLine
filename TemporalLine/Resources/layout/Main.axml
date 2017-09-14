@@ -15,7 +15,8 @@
         android:layout_height="74dp"
         android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
-        app:temopral_line_color_selected="#99ff4687">
+        app:temopral_line_color_selected="#99ff4687"
+        app:temopral_line_movement_allowed="false">
         <temporalLine.components.availabilityTemporalLine
             android:id="@+id/main_temporal_line_atl"
             android:layout_width="match_parent"

@@ -5,6 +5,7 @@
     <attr name="temopral_line_color_busy" format="color" />
     <attr name="temopral_line_color_available" format="color" />
     <attr name="temopral_line_color_selected" format="color" />
+    <attr name="temopral_line_movement_allowed" format="boolean" />
   </declare-styleable>
 
 </resources>

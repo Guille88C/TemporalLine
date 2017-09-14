@@ -117,10 +117,13 @@ namespace TemporalLine.Components
 
 			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
 
-            this.mBusyColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_busy, Color.Red);
-            this.mAvailableColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_available, Color.Green);
+            if (a != null)
+            {
+                this.mBusyColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_busy, Color.Red);
+                this.mAvailableColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_available, Color.Green);
 
-			a.Recycle();
+                a.Recycle();
+            }
 		}
 
         public void Update()
