@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<resources>
+    
+  <declare-styleable name="TemporalLineColor">
+    <attr name="temopral_line_color_busy" format="color" />
+    <attr name="temopral_line_color_available" format="color" />
+    <attr name="temopral_line_color_selected" format="color" />
+  </declare-styleable>
+
+</resources>

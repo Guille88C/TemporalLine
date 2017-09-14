@@ -17,6 +17,8 @@ namespace TemporalLine.Components
     [Register("temporalLine.components.availabilityTemporalLine")]
     public class AvailabilityTemporalLine : View
 	{
+        private Color mBusyColor, mAvailableColor;
+
         private int mWidth, mHeight;
 		private Paint mPaint;
 
@@ -24,22 +26,22 @@ namespace TemporalLine.Components
 
 		public AvailabilityTemporalLine(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
 		public AvailabilityTemporalLine(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
 		public AvailabilityTemporalLine(Context context) : base(context)
         {
-			this.Init();
+			this.Init(null);
 		}
 
 		public AvailabilityTemporalLine(Context context, IAttributeSet attrs) : base(context, attrs)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
         /// <summary>
@@ -68,9 +70,11 @@ namespace TemporalLine.Components
 
             // Green color for all the component.
 			this.mPaint.StrokeWidth = 0;
-            this.mPaint.Color = Color.Green;
-            //canvas.DrawRect(3, 3, this.mWidth - 3, this.mHeight - 3, this.mPaint);
-            canvas.DrawRect(0, 0, this.mWidth, this.mHeight, this.mPaint);
+
+            this.mPaint.Color = this.mAvailableColor;
+            
+			//canvas.DrawRect(3, 3, this.mWidth - 3, this.mHeight - 3, this.mPaint);
+			canvas.DrawRect(0, 0, this.mWidth, this.mHeight, this.mPaint);
 
             // Red color fot the busy areas.
             if (this.mListBusyArea != null && this.mListBusyArea.Count > 0)
@@ -83,14 +87,14 @@ namespace TemporalLine.Components
                         float percStart = item.TemporalLineStart;
                         float percEnd = item.TemporalLineEnd;
 
-                        // We calcula the real points.
+                        // We calculate the real points.
                         //int pointStart = (int)(this.mWidth * percStart) + 3;
                         //int pointEnd = (int)(this.mWidth * percEnd) - 3;
                         int pointStart = (int)(this.mWidth * percStart);
                         int pointEnd = (int)(this.mWidth * percEnd);
 
                         // We paint the rectangles.
-                        this.mPaint.Color = Color.Red;
+                        this.mPaint.Color = this.mBusyColor;
                         //canvas.DrawRect(pointStart, 3, pointEnd, this.mHeight - 3, this.mPaint);
                         canvas.DrawRect(pointStart, 0, pointEnd, this.mHeight, this.mPaint);
                     }
@@ -104,8 +108,19 @@ namespace TemporalLine.Components
             this.SetMeasuredDimension(this.mWidth, this.mHeight);
         }
 
-		private void Init()
+		private void Init(IAttributeSet attrs)
 		{
+			if (this.Context == null || attrs == null)
+			{
+				return;
+			}
+
+			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
+
+            this.mBusyColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_busy, Color.Red);
+            this.mAvailableColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_available, Color.Green);
+
+			a.Recycle();
 		}
 
         public void Update()

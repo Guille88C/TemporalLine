@@ -13,24 +13,26 @@ namespace TemporalLine.Components
 		private int mWidth, mHeight;
 		private Paint mPaint;
 
+        public Color SelectedColor { get; set; }
+
 		public SelectedTemporalLine(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
 		public SelectedTemporalLine(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
 		public SelectedTemporalLine(Context context) : base(context)
         {
-			this.Init();
+            this.Init(null);
 		}
 
 		public SelectedTemporalLine(Context context, IAttributeSet attrs) : base(context, attrs)
         {
-			this.Init();
+			this.Init(attrs);
 		}
 
 		protected override void OnDraw(Canvas canvas)
@@ -38,7 +40,7 @@ namespace TemporalLine.Components
 			this.mPaint = new Paint();
 
 			this.mPaint.StrokeWidth = 0;
-			this.mPaint.Color = new Color(235, 92, 48, 200);
+            this.mPaint.Color = this.SelectedColor;
             //canvas.DrawRect(3, 3, this.mWidth - 3, this.mHeight - 3, this.mPaint);
             canvas.DrawRect(0, 0, this.mWidth, this.mHeight, this.mPaint);
         }
@@ -49,8 +51,8 @@ namespace TemporalLine.Components
 			this.SetMeasuredDimension(this.mWidth, this.mHeight);
 		}
 
-        private void Init()
-        {
+        private void Init(IAttributeSet attrs)
+		{
         }
     }
 }

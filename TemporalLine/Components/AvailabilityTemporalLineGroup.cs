@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.Content;
+using Android.Graphics;
 using Android.Runtime;
 using Android.Util;
 using Android.Views;
@@ -33,30 +34,42 @@ namespace TemporalLine.Components
         /// </summary>
         private float origX, origY;
 
+        private Color mSelectedColor;
+
         // CONSTRUCTOR
 
         public AvailabilityTemporalLineGroup(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
         {
-            this.Init();
+            this.Init(attrs);
         }
 
         public AvailabilityTemporalLineGroup(Context context, IAttributeSet attrs, int defStyleAttr) : base(context, attrs, defStyleAttr)
 		{
-			this.Init();
+			this.Init(attrs);
         }
 
 		public AvailabilityTemporalLineGroup(Context context, IAttributeSet attrs) : base(context, attrs)
 		{
-			this.Init();
+			this.Init(attrs);
         }
 
 		public AvailabilityTemporalLineGroup(Context context) : base(context)
 		{
-			this.Init();
+			this.Init(null);
 		}
 
-        private void Init()
-        {
+        private void Init(IAttributeSet attrs)
+		{
+			if (this.Context == null || attrs == null)
+			{
+				return;
+			}
+
+			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
+
+            this.mSelectedColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_selected, Color.Orange);
+
+			a.Recycle();
         }
 
         // ====
@@ -81,6 +94,7 @@ namespace TemporalLine.Components
                 // We create and place the selected area view over the timeline in the position where it must be, and with the
                 // width that it must have.
                 SelectedTemporalLine selectedLine = new SelectedTemporalLine(this.Context);
+                selectedLine.SelectedColor = this.mSelectedColor;
                 selectedLine.SetX(this.mWidth * selectedArea.TemporalLineStart);
                 this.AddView(selectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
 
