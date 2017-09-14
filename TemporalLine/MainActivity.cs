@@ -39,7 +39,10 @@ namespace TemporalLine
             {
                 if (temporalLineGroup != null)
                 {
-                    temporalLineGroup.AddSelectedTemporalLine(new TemporalLinePoint { TemporalLineStart = 400.0f / 1399.0f, TemporalLineEnd = 600.0f / 1399.0f });
+                    if (temporalLineGroup.HasSelectedArea())
+                        temporalLineGroup.RemoveSelectedTemporalLine();
+                    else
+                        temporalLineGroup.AddSelectedTemporalLine(new TemporalLinePoint { TemporalLineStart = 400.0f / 1399.0f, TemporalLineEnd = 600.0f / 1399.0f });
                 }
             };
         }

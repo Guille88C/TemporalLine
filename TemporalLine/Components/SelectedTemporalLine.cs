@@ -10,7 +10,7 @@ namespace TemporalLine.Components
     /// </summary>
     public class SelectedTemporalLine : View
 	{
-		private int mWidth, mHeight;
+        private int mWidth, mHeight;
 		private Paint mPaint;
 
         public Color SelectedColor { get; set; }

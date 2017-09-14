@@ -37,6 +37,8 @@ namespace TemporalLine.Components
         private Color mSelectedColor;
         private bool mMovementAllowed;
 
+        private SelectedTemporalLine mSelectedLine;
+
         // CONSTRUCTOR
 
         public AvailabilityTemporalLineGroup(Context context, IAttributeSet attrs, int defStyleAttr, int defStyleRes) : base(context, attrs, defStyleAttr, defStyleRes)
@@ -61,20 +63,23 @@ namespace TemporalLine.Components
 
         private void Init(IAttributeSet attrs)
 		{
-			if (this.Context == null || attrs == null)
-			{
-				return;
-			}
+            //if (this.Context == null || attrs == null)
+            //{
+            //	return;
+            //}
 
-			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
+            //var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
 
-            if (a != null)
-            {
-                this.mSelectedColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_selected, Color.Orange);
-                this.mMovementAllowed = a.GetBoolean(Resource.Styleable.TemporalLineColor_temopral_line_movement_allowed, false);
+            //         if (a != null)
+            //         {
+            //             this.mSelectedColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_selected, Color.Orange);
+            //             this.mMovementAllowed = a.GetBoolean(Resource.Styleable.TemporalLineColor_temopral_line_movement_allowed, false);
 
-                a.Recycle();
-            }
+            //             a.Recycle();
+            //         }
+
+            this.mSelectedColor = new Color(255, 70, 135, 180);
+            this.mMovementAllowed = false;
         }
 
         // ====
@@ -85,8 +90,14 @@ namespace TemporalLine.Components
             base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
 
+        private void GetSelectedInstance()
+        {
+            if (this.mSelectedLine == null)
+                this.mSelectedLine = new SelectedTemporalLine(this.Context);
+        }
+
         /// <summary>
-        /// This method places a selected area over the temporal line,
+        /// This method places a selected area over the temporal line.
         /// </summary>
         /// <param name="selectedArea">The percentage star point and the percentage end point of the time line.</param>
         public void AddSelectedTemporalLine(TemporalLinePoint selectedArea)
@@ -98,15 +109,15 @@ namespace TemporalLine.Components
 
                 // We create and place the selected area view over the timeline in the position where it must be, and with the
                 // width that it must have.
-                SelectedTemporalLine selectedLine = new SelectedTemporalLine(this.Context);
-                selectedLine.SelectedColor = this.mSelectedColor;
-                selectedLine.SetX(this.mWidth * selectedArea.TemporalLineStart);
-                this.AddView(selectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
+                this.GetSelectedInstance();
+                this.mSelectedLine.SelectedColor = this.mSelectedColor;
+                this.mSelectedLine.SetX(this.mWidth * selectedArea.TemporalLineStart);
+                this.AddView(this.mSelectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
 
                 // With the touch event we move el selected area view.
                 if (this.mMovementAllowed)
                 {
-                    selectedLine.Touch += (sender, e) =>
+                    this.mSelectedLine.Touch += (sender, e) =>
                     {
                         switch (e.Event.Action)
                         {
@@ -123,13 +134,13 @@ namespace TemporalLine.Components
                                 float deltaY = e.Event.RawY - this.origY;
 
                                 // We calculate the new position of the selected area view.
-                                float posViewX = selectedLine.GetX() + deltaX;
+                                float posViewX = this.mSelectedLine.GetX() + deltaX;
                                 if (posViewX > this.mWidth - width) posViewX = this.mWidth - width;
                                 else if (posViewX < 0) posViewX = 0;
 
                                 // We place the selected area view in the new position, and we repaint it ("Invalidate").
-                                selectedLine.SetX(posViewX);
-                                selectedLine.Invalidate();
+                                this.mSelectedLine.SetX(posViewX);
+                                this.mSelectedLine.Invalidate();
 
                                 // We calculate the new "origX" and "origY" values. They have to be changed to calculate a right value of
                                 // "deltaX" and "deltaY".
@@ -143,17 +154,36 @@ namespace TemporalLine.Components
                             case MotionEventActions.Cancel:
                                 if (this.positionEvent != null)
                                 {
-                                    this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = selectedLine.GetX() / this.mWidth, TemporalLineEnd = (selectedLine.GetX() + width) / this.mWidth });
+                                    this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = this.mSelectedLine.GetX() / this.mWidth, TemporalLineEnd = (this.mSelectedLine.GetX() + width) / this.mWidth });
                                 }
                                 break;
                         }
 
 #if (DEBUG)
-                        Log.Info("ATLG :: pos", "(" + (selectedLine.GetX() / this.mWidth).ToString() + " , " + ((selectedLine.GetX() + width) / this.mWidth).ToString() + ")");
+                        Log.Info("ATLG :: pos", "(" + (this.mSelectedLine.GetX() / this.mWidth).ToString() + " , " + ((this.mSelectedLine.GetX() + width) / this.mWidth).ToString() + ")");
 #endif
                     };
                 }
             }
+        }
+
+        /// <summary>
+        /// This method removes the selected area over the temporal line.
+        /// </summary>
+        public void RemoveSelectedTemporalLine()
+        {
+            if (this.HasSelectedArea())
+            {
+                this.RemoveView(this.mSelectedLine);
+            }
+        }
+
+        /// <summary>
+        /// This method checks if the temporal line has a selected area.
+        /// </summary>
+        public bool HasSelectedArea()
+        {
+            return this.mSelectedLine?.Parent == this;
         }
     }
 }

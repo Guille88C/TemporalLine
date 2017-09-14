@@ -110,20 +110,23 @@ namespace TemporalLine.Components
 
 		private void Init(IAttributeSet attrs)
 		{
-			if (this.Context == null || attrs == null)
-			{
-				return;
-			}
+            //if (this.Context == null || attrs == null)
+            //{
+            //	return;
+            //}
 
-			var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
+            //var a = this.Context.ObtainStyledAttributes(attrs, Resource.Styleable.TemporalLineColor);
 
-            if (a != null)
-            {
-                this.mBusyColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_busy, Color.Red);
-                this.mAvailableColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_available, Color.Green);
+            //         if (a != null)
+            //         {
+            //             this.mBusyColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_busy, Color.Red);
+            //             this.mAvailableColor = a.GetColor(Resource.Styleable.TemporalLineColor_temopral_line_color_available, Color.Green);
 
-                a.Recycle();
-            }
+            //             a.Recycle();
+            //         }
+
+            this.mBusyColor = new Color(80, 190, 90);
+            this.mAvailableColor = new Color(247, 247, 247);
 		}
 
         public void Update()

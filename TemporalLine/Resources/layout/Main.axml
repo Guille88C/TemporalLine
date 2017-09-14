@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -14,14 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="74dp"
         android:layout_marginTop="20dp"
-        android:layout_gravity="center_horizontal"
-        app:temopral_line_color_selected="#99ff4687"
-        app:temopral_line_movement_allowed="false">
+        android:layout_gravity="center_horizontal">
         <temporalLine.components.availabilityTemporalLine
             android:id="@+id/main_temporal_line_atl"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:temopral_line_color_available="#f7f7f7"
-            app:temopral_line_color_busy="#55be5a" />
+            android:layout_height="match_parent" />
     </temporalLine.components.availabilityTemporalLineGroup>
 </LinearLayout>
