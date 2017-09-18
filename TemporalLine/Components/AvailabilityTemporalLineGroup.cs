@@ -19,6 +19,9 @@ namespace TemporalLine.Components
     [Register("temporalLine.components.availabilityTemporalLineGroup")]
     public class AvailabilityTemporalLineGroup : FrameLayout
 	{
+        private const int NOT_MEASURED = 0;
+        private const int MEASURED = 1;
+
         /// <summary>
         /// This event returns the final position of the selected area when we finish of sliding the selected area.
         /// </summary>
@@ -38,6 +41,9 @@ namespace TemporalLine.Components
         private bool mMovementAllowed;
 
         private SelectedTemporalLine mSelectedLine;
+
+        private int mMeasureState = NOT_MEASURED;
+        private TemporalLinePoint mSelectedArea;
 
         // CONSTRUCTOR
 
@@ -84,9 +90,21 @@ namespace TemporalLine.Components
 
         // ====
 
+        protected override void OnDraw(Canvas canvas)
+        {
+            base.OnDraw(canvas);
+        }
+
         protected override void OnMeasure(int widthMeasureSpec, int heightMeasureSpec)
 		{
-            TemporalLineHelper.MeasureView(widthMeasureSpec, heightMeasureSpec, out this.mWidth, out this.mHeight);
+			TemporalLineHelper.MeasureView(widthMeasureSpec, heightMeasureSpec, out this.mWidth, out this.mHeight);
+			
+            if (this.mSelectedArea != null && this.mMeasureState == NOT_MEASURED)
+			{
+                this.mMeasureState = MEASURED;
+                this.RemoveSelectedTemporalLine();
+				this.AddSelectedTemporalLine(this.mSelectedArea);
+			}
             base.OnMeasure(widthMeasureSpec, heightMeasureSpec);
 		}
 
@@ -104,65 +122,72 @@ namespace TemporalLine.Components
         {
             if (selectedArea != null)
             {
-                // We calculate the width of the selected area (dp).
-                int width = (int)((selectedArea.TemporalLineEnd - selectedArea.TemporalLineStart) * this.mWidth);
-
-                // We create and place the selected area view over the timeline in the position where it must be, and with the
-                // width that it must have.
-                this.GetSelectedInstance();
-                this.mSelectedLine.SelectedColor = this.mSelectedColor;
-                this.mSelectedLine.SetX(this.mWidth * selectedArea.TemporalLineStart);
-                this.AddView(this.mSelectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
-
-                // With the touch event we move el selected area view.
-                if (this.mMovementAllowed)
+                if (this.mMeasureState == MEASURED)
                 {
-                    this.mSelectedLine.Touch += (sender, e) =>
+                    // We calculate the width of the selected area (dp).
+                    int width = (int)((selectedArea.TemporalLineEnd - selectedArea.TemporalLineStart) * this.mWidth);
+
+                    // We create and place the selected area view over the timeline in the position where it must be, and with the
+                    // width that it must have.
+                    this.GetSelectedInstance();
+                    this.mSelectedLine.SelectedColor = this.mSelectedColor;
+                    this.mSelectedLine.SetX(this.mWidth * selectedArea.TemporalLineStart);
+                    this.AddView(this.mSelectedLine, new ViewGroup.LayoutParams(width, ViewGroup.LayoutParams.MatchParent));
+
+                    // With the touch event we move el selected area view.
+                    if (this.mMovementAllowed)
                     {
-                        switch (e.Event.Action)
+                        this.mSelectedLine.Touch += (sender, e) =>
                         {
+                            switch (e.Event.Action)
+                            {
                             // We save the coordinates where we are touching the screen (x, y) just when we touch the selected area.
                             case MotionEventActions.Down:
-                                this.origX = e.Event.RawX;
-                                this.origY = e.Event.RawY;
-                                break;
+                                    this.origX = e.Event.RawX;
+                                    this.origY = e.Event.RawY;
+                                    break;
 
                             // We move the selected area view.
                             case MotionEventActions.Move:
                                 // Distance that we have moved the selected area.
                                 float deltaX = e.Event.RawX - this.origX;
-                                float deltaY = e.Event.RawY - this.origY;
+                                    float deltaY = e.Event.RawY - this.origY;
 
                                 // We calculate the new position of the selected area view.
                                 float posViewX = this.mSelectedLine.GetX() + deltaX;
-                                if (posViewX > this.mWidth - width) posViewX = this.mWidth - width;
-                                else if (posViewX < 0) posViewX = 0;
+                                    if (posViewX > this.mWidth - width) posViewX = this.mWidth - width;
+                                    else if (posViewX < 0) posViewX = 0;
 
                                 // We place the selected area view in the new position, and we repaint it ("Invalidate").
                                 this.mSelectedLine.SetX(posViewX);
-                                this.mSelectedLine.Invalidate();
+                                    this.mSelectedLine.Invalidate();
 
                                 // We calculate the new "origX" and "origY" values. They have to be changed to calculate a right value of
                                 // "deltaX" and "deltaY".
                                 this.origX = e.Event.RawX;
-                                this.origY = e.Event.RawY;
+                                    this.origY = e.Event.RawY;
 
-                                break;
+                                    break;
 
                             // When we finish touching the selected area, we invoke an event with the percentage start point and the percentage end point where it is palced.
                             case MotionEventActions.Up:
-                            case MotionEventActions.Cancel:
-                                if (this.positionEvent != null)
-                                {
-                                    this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = this.mSelectedLine.GetX() / this.mWidth, TemporalLineEnd = (this.mSelectedLine.GetX() + width) / this.mWidth });
-                                }
-                                break;
-                        }
+                                case MotionEventActions.Cancel:
+                                    if (this.positionEvent != null)
+                                    {
+                                        this.positionEvent.Invoke(this, new TemporalLinePoint { TemporalLineStart = this.mSelectedLine.GetX() / this.mWidth, TemporalLineEnd = (this.mSelectedLine.GetX() + width) / this.mWidth });
+                                    }
+                                    break;
+                            }
 
 #if (DEBUG)
                         Log.Info("ATLG :: pos", "(" + (this.mSelectedLine.GetX() / this.mWidth).ToString() + " , " + ((this.mSelectedLine.GetX() + width) / this.mWidth).ToString() + ")");
 #endif
                     };
+                    }
+                }
+                else
+                {
+                    this.mSelectedArea = selectedArea;
                 }
             }
         }
