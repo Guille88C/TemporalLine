@@ -4,6 +4,8 @@ VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalLine", "TemporalLine\TemporalLine.csproj", "{B79C8CFE-0D83-432A-8135-C1F8CFA71A40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemporalLine.Droid", "TemporalLine.Droid\TemporalLine.Droid.csproj", "{86065DF2-86FF-4BB6-890A-2B042477EE83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,6 +18,10 @@ Global
 		{B79C8CFE-0D83-432A-8135-C1F8CFA71A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B79C8CFE-0D83-432A-8135-C1F8CFA71A40}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B79C8CFE-0D83-432A-8135-C1F8CFA71A40}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{86065DF2-86FF-4BB6-890A-2B042477EE83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86065DF2-86FF-4BB6-890A-2B042477EE83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86065DF2-86FF-4BB6-890A-2B042477EE83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86065DF2-86FF-4BB6-890A-2B042477EE83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

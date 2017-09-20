@@ -51,14 +51,9 @@
     <Reference Include="Mono.Android" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\TemporalLineHelper.cs" />
-    <Compile Include="Components\TemporalLinePoint.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Components\AvailabilityTemporalLine.cs" />
-    <Compile Include="Components\SelectedTemporalLine.cs" />
-    <Compile Include="Components\AvailabilityTemporalLineGroup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\AboutResources.txt" />
@@ -77,6 +72,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\drawable\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TemporalLine.Droid\TemporalLine.Droid.csproj">
+      <Project>{86065DF2-86FF-4BB6-890A-2B042477EE83}</Project>
+      <Name>TemporalLine.Droid</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
